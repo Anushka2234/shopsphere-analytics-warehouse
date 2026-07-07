@@ -171,14 +171,10 @@ dim_product
 ## 5. Sellers
 
 
-Source:
-
-olist_sellers_dataset.csv
+Source: olist_sellers_dataset.csv
 
 
-Purpose:
-
-Stores seller information.
+Purpose: Stores seller information.
 
 
 Primary Key: seller_id
@@ -196,24 +192,16 @@ dim_seller
 ## 6. Payments
 
 
-Source:
-
-olist_order_payments_dataset.csv
+Source: olist_order_payments_dataset.csv
 
 
-Purpose:
-
-Stores payment transactions.
+Purpose: Stores payment transactions.
 
 
-Metrics:
-
-payment_value
+Metrics: payment_value
 
 
-Used For:
-
-Financial KPIs
+Used For: Financial KPIs
 
 
 
