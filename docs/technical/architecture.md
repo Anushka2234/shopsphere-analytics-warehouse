@@ -43,9 +43,7 @@ Power BI
 # 1. Source Layer
 
 
-Technology:
-
-CSV Files
+Technology: CSV Files
 
 
 Contains:
@@ -63,19 +61,13 @@ Payments
 # 2. Raw Layer
 
 
-Technology:
-
-SQL Server
+Technology: SQL Server
 
 
-Schema:
-
-raw
+Schema: raw
 
 
-Purpose:
-
-Store original unchanged data.
+Purpose: Store original unchanged data.
 
 
 Example:
@@ -97,15 +89,10 @@ No transformation
 # 3. Staging Layer
 
 
-Schema:
-
-staging
+Schema: staging
 
 
-Purpose:
-
-
-Prepare data for warehouse loading.
+Purpose: Prepare data for warehouse loading.
 
 
 Activities:
@@ -124,10 +111,7 @@ Validate data
 # 4. Transformation Layer
 
 
-Purpose:
-
-
-Apply business logic.
+Purpose: Apply business logic.
 
 
 Activities:
@@ -146,14 +130,10 @@ Prepare facts
 # 5. Warehouse Layer
 
 
-Model:
-
-Star Schema
+Model: Star Schema
 
 
-Schema:
-
-dw
+Schema: dw
 
 
 
