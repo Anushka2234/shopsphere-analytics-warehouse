@@ -95,41 +95,13 @@ One row represents one product sold in an order.
 Columns:
 
 
-sales_key
+sales_key: Primary Key
 
-Primary Key
-
-Surrogate Key
-
-
-
-order_id
-
-Original transaction ID
-
-
-
-customer_key
-
-Foreign Key
-
-
-
-product_key
-
-Foreign Key
-
-
-
-seller_key
-
-Foreign Key
-
-
-
-date_key
-
-Foreign Key
+Surrogate Key: order_id, Original transaction ID
+customer_key: Foreign Key
+product_key: Foreign Key
+seller_key: Foreign Key
+date_key: Foreign Key
 
 
 
