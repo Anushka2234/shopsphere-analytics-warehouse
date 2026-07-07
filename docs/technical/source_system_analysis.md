@@ -74,18 +74,11 @@ dim_customer
 ## 2. Orders
 
 
-Source File:
+Source File: olist_orders_dataset.csv
 
-olist_orders_dataset.csv
-
-
-Business Purpose:
-
-Stores customer purchase transactions.
-
+Business Purpose: Stores customer purchase transactions.
 
 Primary Key: order_id
-
 
 Foreign Key: customer_id
 
@@ -98,9 +91,7 @@ order_delivered_customer_date
 
 
 Used For:
-
 Sales analysis
-
 Delivery performance
 
 
