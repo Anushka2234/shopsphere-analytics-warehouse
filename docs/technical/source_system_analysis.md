@@ -107,14 +107,8 @@ fact_sales
 ## 3. Order Items
 
 
-Source:
-
-olist_order_items_dataset.csv
-
-
-Purpose:
-
-Stores product level order details.
+Source: olist_order_items_dataset.csv
+Purpose: Stores product level order details.
 
 
 Keys:
@@ -127,19 +121,15 @@ seller_id
 
 
 Measures:
-
 price
-
 freight_value
 
 
 Used For:
-
 Revenue calculations
 
 
 Warehouse Target:
-
 fact_sales
 
 
