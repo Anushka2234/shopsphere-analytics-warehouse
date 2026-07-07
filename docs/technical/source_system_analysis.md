@@ -44,41 +44,26 @@ The operational systems include:
 ## 1. Customers
 
 
-Source File:
-
-olist_customers_dataset.csv
+Source File: olist_customers_dataset.csv
 
 
-Business Purpose:
-
-Stores customer profile and location information.
+Business Purpose: Stores customer profile and location information.
 
 
-Primary Key:
+Primary Key: customer_id
 
-customer_id
-
-
-Important Columns:
-
-customer_id
-
+Important Columns: customer_id
 customer_unique_id
-
 customer_city
-
 customer_state
 
 
 Used For:
-
 Customer analytics
-
 Customer segmentation
 
 
 Warehouse Target:
-
 dim_customer
 
 
@@ -99,19 +84,13 @@ Business Purpose:
 Stores customer purchase transactions.
 
 
-Primary Key:
-
-order_id
+Primary Key: order_id
 
 
-Foreign Key:
-
-customer_id
+Foreign Key: customer_id
 
 
-Important Columns:
-
-order_status
+Important Columns: order_status
 
 order_purchase_timestamp
 
@@ -190,15 +169,12 @@ Purpose:
 Stores product information.
 
 
-Primary Key:
-
-product_id
+Primary Key: product_id
 
 
 Important Columns:
 
 product_category_name
-
 product_weight_g
 
 
@@ -224,9 +200,7 @@ Purpose:
 Stores seller information.
 
 
-Primary Key:
-
-seller_id
+Primary Key: seller_id
 
 
 Warehouse Target:
@@ -268,24 +242,16 @@ Financial KPIs
 ## 7. Reviews
 
 
-Source:
-
-olist_order_reviews_dataset.csv
+Source: olist_order_reviews_dataset.csv
 
 
-Purpose:
-
-Stores customer feedback.
+Purpose: Stores customer feedback.
 
 
-Metrics:
-
-review_score
+Metrics: review_score
 
 
-Used For:
-
-Customer satisfaction analytics
+Used For: Customer satisfaction analytics
 
 
 
