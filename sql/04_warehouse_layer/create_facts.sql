@@ -1,0 +1,3 @@
+/*
+Fact table creation scripts
+*/
