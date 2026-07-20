@@ -5,7 +5,7 @@ Project Name : ShopSphere Analytics Warehouse
 
 Layer        : STAGING
 
-Script       : 05_staging_payments.sql
+Script       : 06_staging_payments.sql
 
 Source       : raw.payments
 
@@ -20,9 +20,10 @@ Cleaning Rules
 --------------
 1. Remove leading/trailing spaces
 2. Standardize payment type
-3. Validate installments
-4. Validate payment value
-5. Add ETL metadata
+3. Handle NULL and blank values
+4. Validate installments
+5. Validate payment amount
+6. Add ETL metadata
 
 Author : Your Name
 
@@ -60,6 +61,7 @@ STEP 3 : CREATE TABLE
 
 CREATE TABLE staging.payments
 (
+
     order_id VARCHAR(50) NOT NULL,
 
     payment_sequential INT NOT NULL,
@@ -73,6 +75,7 @@ CREATE TABLE staging.payments
     etl_created_date DATETIME,
 
     source_system VARCHAR(50)
+
 );
 
 GO
@@ -83,13 +86,21 @@ STEP 4 : LOAD CLEAN DATA
 
 INSERT INTO staging.payments
 (
-    order_id,
-    payment_sequential,
-    payment_type,
-    payment_installments,
-    payment_value,
-    etl_created_date,
-    source_system
+
+order_id,
+
+payment_sequential,
+
+payment_type,
+
+payment_installments,
+
+payment_value,
+
+etl_created_date,
+
+source_system
+
 )
 
 SELECT
@@ -107,16 +118,31 @@ TRIM(order_id),
 payment_sequential,
 
 ---------------------------------------------------------
--- Payment Type
----------------------------------------------------------
-
-UPPER(TRIM(payment_type)),
-
----------------------------------------------------------
--- Installments
+-- Payment Type Cleaning
 ---------------------------------------------------------
 
 CASE
+
+WHEN payment_type IS NULL
+     OR TRIM(payment_type)=''
+
+THEN 'UNKNOWN'
+
+ELSE
+
+UPPER(TRIM(payment_type))
+
+END,
+
+---------------------------------------------------------
+-- Payment Installments
+---------------------------------------------------------
+
+CASE
+
+WHEN payment_installments IS NULL
+
+THEN 0
 
 WHEN payment_installments < 0
 
@@ -132,6 +158,10 @@ END,
 
 CASE
 
+WHEN payment_value IS NULL
+
+THEN 0
+
 WHEN payment_value < 0
 
 THEN 0
@@ -141,7 +171,7 @@ ELSE payment_value
 END,
 
 ---------------------------------------------------------
--- ETL Date
+-- ETL Created Date
 ---------------------------------------------------------
 
 GETDATE(),
@@ -161,7 +191,7 @@ STEP 5 : VALIDATION
 ==============================================================*/
 
 ---------------------------------------------------------
--- Raw vs Staging Count
+-- Validation 1 : Raw vs Staging Count
 ---------------------------------------------------------
 
 SELECT
@@ -182,8 +212,10 @@ COUNT(*)
 
 FROM staging.payments;
 
+GO
+
 ---------------------------------------------------------
--- Duplicate Composite Key
+-- Validation 2 : Duplicate Payments
 ---------------------------------------------------------
 
 SELECT
@@ -204,18 +236,24 @@ payment_sequential
 
 HAVING COUNT(*) > 1;
 
+GO
+
 ---------------------------------------------------------
--- Invalid Payment Values
+-- Validation 3 : Unknown Payment Types
 ---------------------------------------------------------
 
-SELECT *
+SELECT
+
+COUNT(*) AS unknown_payment_type
 
 FROM staging.payments
 
-WHERE payment_value < 0;
+WHERE payment_type='UNKNOWN';
+
+GO
 
 ---------------------------------------------------------
--- Invalid Installments
+-- Validation 4 : Invalid Installments
 ---------------------------------------------------------
 
 SELECT *
@@ -224,8 +262,22 @@ FROM staging.payments
 
 WHERE payment_installments < 0;
 
+GO
+
 ---------------------------------------------------------
--- Payment Type Distribution
+-- Validation 5 : Invalid Payment Values
+---------------------------------------------------------
+
+SELECT *
+
+FROM staging.payments
+
+WHERE payment_value < 0;
+
+GO
+
+---------------------------------------------------------
+-- Validation 6 : Payment Type Distribution
 ---------------------------------------------------------
 
 SELECT
@@ -240,31 +292,45 @@ GROUP BY payment_type
 
 ORDER BY total_payments DESC;
 
+GO
+
 ---------------------------------------------------------
--- Payment Statistics
+-- Validation 7 : Payment Statistics
 ---------------------------------------------------------
 
 SELECT
-
-AVG(payment_value) AS average_payment,
 
 MIN(payment_value) AS minimum_payment,
 
-MAX(payment_value) AS maximum_payment
+MAX(payment_value) AS maximum_payment,
+
+AVG(payment_value) AS average_payment
 
 FROM staging.payments;
 
+GO
+
 ---------------------------------------------------------
--- Installment Statistics
+-- Validation 8 : Installment Statistics
 ---------------------------------------------------------
 
 SELECT
 
-AVG(payment_installments) AS average_installments,
-
 MIN(payment_installments) AS minimum_installments,
 
-MAX(payment_installments) AS maximum_installments
+MAX(payment_installments) AS maximum_installments,
+
+AVG(payment_installments) AS average_installments
+
+FROM staging.payments;
+
+GO
+
+---------------------------------------------------------
+-- Validation 9 : Sample Data
+---------------------------------------------------------
+
+SELECT TOP 20 *
 
 FROM staging.payments;
 
