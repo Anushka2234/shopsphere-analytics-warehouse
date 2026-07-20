@@ -18,14 +18,11 @@ the Data Warehouse.
 
 Cleaning Rules
 --------------
-1. Remove leading/trailing spaces
+1. Trim spaces
 2. Validate review score
-3. Replace NULL review title with 'NO TITLE'
-4. Replace NULL review message with 'NO COMMENT'
-5. Convert dates to DATETIME
-6. Add ETL metadata
-
-Author : Your Name
+3. Keep NULL review title/message (business meaning)
+4. Convert dates to DATETIME
+5. Add ETL metadata
 
 ====================================================================
 */
@@ -39,12 +36,12 @@ STEP 1 : CREATE STAGING SCHEMA
 
 IF NOT EXISTS
 (
-    SELECT 1
-    FROM sys.schemas
-    WHERE name='staging'
+SELECT 1
+FROM sys.schemas
+WHERE name='staging'
 )
 BEGIN
-    EXEC('CREATE SCHEMA staging');
+EXEC('CREATE SCHEMA staging');
 END;
 GO
 
@@ -61,123 +58,71 @@ STEP 3 : CREATE TABLE
 
 CREATE TABLE staging.reviews
 (
-    review_id VARCHAR(50) NOT NULL,
+review_id VARCHAR(50) NOT NULL,
 
-    order_id VARCHAR(50) NOT NULL,
+order_id VARCHAR(50) NOT NULL,
 
-    review_score INT,
+review_score INT,
 
-    review_comment_title NVARCHAR(500),
+review_comment_title NVARCHAR(500),
 
-    review_comment_message NVARCHAR(MAX),
+review_comment_message NVARCHAR(MAX),
 
-    review_creation_date DATETIME,
+review_creation_date DATETIME,
 
-    review_answer_timestamp DATETIME,
+review_answer_timestamp DATETIME,
 
-    etl_created_date DATETIME,
+etl_created_date DATETIME,
 
-    source_system VARCHAR(50)
+source_system VARCHAR(50)
 );
 
 GO
 
 /*==============================================================
-STEP 4 : LOAD CLEAN DATA
+STEP 4 : LOAD DATA
 ==============================================================*/
 
 INSERT INTO staging.reviews
 (
-    review_id,
-    order_id,
-    review_score,
-    review_comment_title,
-    review_comment_message,
-    review_creation_date,
-    review_answer_timestamp,
-    etl_created_date,
-    source_system
+review_id,
+order_id,
+review_score,
+review_comment_title,
+review_comment_message,
+review_creation_date,
+review_answer_timestamp,
+etl_created_date,
+source_system
 )
 
 SELECT
 
----------------------------------------------------------
--- Review ID
----------------------------------------------------------
-
 TRIM(review_id),
-
----------------------------------------------------------
--- Order ID
----------------------------------------------------------
 
 TRIM(order_id),
 
----------------------------------------------------------
--- Review Score
----------------------------------------------------------
-
 CASE
-
 WHEN review_score < 1 THEN 1
-
 WHEN review_score > 5 THEN 5
-
 ELSE review_score
-
 END,
 
----------------------------------------------------------
--- Review Title
----------------------------------------------------------
-
 CASE
-
-WHEN review_comment_title IS NULL
-     OR TRIM(review_comment_title)=''
-
-THEN 'NO TITLE'
-
+WHEN review_comment_title IS NULL THEN NULL
 ELSE TRIM(review_comment_title)
-
 END,
-
----------------------------------------------------------
--- Review Message
----------------------------------------------------------
 
 CASE
-
-WHEN review_comment_message IS NULL
-     OR TRIM(review_comment_message)=''
-
-THEN 'NO COMMENT'
-
+WHEN review_comment_message IS NULL THEN NULL
 ELSE TRIM(review_comment_message)
-
 END,
-
----------------------------------------------------------
--- Review Creation Date
----------------------------------------------------------
 
 TRY_CAST(review_creation_date AS DATETIME),
 
----------------------------------------------------------
--- Review Answer Timestamp
----------------------------------------------------------
-
 TRY_CAST(review_answer_timestamp AS DATETIME),
 
----------------------------------------------------------
--- ETL Date
----------------------------------------------------------
-
 GETDATE(),
-
----------------------------------------------------------
--- Source System
----------------------------------------------------------
 
 'OLIST_ECOMMERCE'
 
@@ -189,9 +134,7 @@ GO
 STEP 5 : VALIDATION
 ==============================================================*/
 
----------------------------------------------------------
--- Validation 1 : Row Count
----------------------------------------------------------
+-- Row Count
 
 SELECT
 
@@ -213,9 +156,7 @@ FROM staging.reviews;
 
 GO
 
----------------------------------------------------------
--- Validation 2 : Duplicate Review IDs
----------------------------------------------------------
+-- Duplicate Review IDs
 
 SELECT
 
@@ -231,9 +172,7 @@ HAVING COUNT(*) > 1;
 
 GO
 
----------------------------------------------------------
--- Validation 3 : Invalid Review Scores
----------------------------------------------------------
+-- Invalid Scores
 
 SELECT *
 
@@ -243,9 +182,7 @@ WHERE review_score NOT BETWEEN 1 AND 5;
 
 GO
 
----------------------------------------------------------
--- Validation 4 : Review Score Distribution
----------------------------------------------------------
+-- Review Score Distribution
 
 SELECT
 
@@ -261,37 +198,31 @@ ORDER BY review_score;
 
 GO
 
----------------------------------------------------------
--- Validation 5 : Missing Titles
----------------------------------------------------------
+-- NULL Review Titles
 
 SELECT
 
-COUNT(*) AS no_title_count
+COUNT(*) AS null_review_titles
 
 FROM staging.reviews
 
-WHERE review_comment_title='NO TITLE';
+WHERE review_comment_title IS NULL;
 
 GO
 
----------------------------------------------------------
--- Validation 6 : Missing Comments
----------------------------------------------------------
+-- NULL Review Messages
 
 SELECT
 
-COUNT(*) AS no_comment_count
+COUNT(*) AS null_review_messages
 
 FROM staging.reviews
 
-WHERE review_comment_message='NO COMMENT';
+WHERE review_comment_message IS NULL;
 
 GO
 
----------------------------------------------------------
--- Validation 7 : Sample Data
----------------------------------------------------------
+-- Sample Data
 
 SELECT TOP 20 *
 
