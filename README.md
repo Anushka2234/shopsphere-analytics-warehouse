@@ -101,7 +101,23 @@ The Staging Layer prepares data for the warehouse by applying data quality impro
 - Layered Data Warehouse Architecture
 
 ---
+## Phase 3 – Warehouse Design
 
+### Completed
+
+- Business Requirements
+- Warehouse Architecture
+- Star Schema Design
+- Dimensional Modeling
+- Data Dictionary
+- Warehouse Planning
+
+### Upcoming
+
+- Create Dimension Tables
+- Create Fact Table
+- Load Dimensions
+- Load Fact Table
 ## Project Progress
 
 - ✅ Phase 1 – Database Setup
